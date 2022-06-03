@@ -5,8 +5,13 @@ export const createWhitelist = async (
 ): Promise<WhitelistDocument> => {
   const record = {
     confirmed: true,
-    address: userAddress.toLowerCase() ?? ''
+    address: userAddress.toLowerCase()
   };
-  const artist = await WhitelistModel.create(record);
-  return artist;
+  const whitelist = await WhitelistModel.create(record);
+  return whitelist;
+};
+
+export const getWhitelists = async (): Promise<WhitelistDocument[]> => {
+  const whitelists = await WhitelistModel.find();
+  return whitelists;
 };

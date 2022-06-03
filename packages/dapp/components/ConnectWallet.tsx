@@ -7,25 +7,29 @@ import { ZERO_ADDRESS } from '@/utils/constants';
 import { formatAddress, useWallet } from '@/web3';
 import { getEthersProvider } from '@/web3/providers';
 
+import { NetworkDisplay } from './NetworkDisplay';
 import { PrimaryButton } from './PrimaryButton';
 
 export const ConnectWallet: React.FC = () => {
-  const { connectWallet, isConnecting, isConnected, disconnect, address } =
-    useWallet();
+  const {
+    connectWallet,
+    isConnecting,
+    isConnected,
+    disconnect,
+    address,
+    chainId,
+  } = useWallet();
   const { ens } = useENS(address);
   return (
     <PrimaryButton
+      pl={isConnected ? 2 : 3}
+      pr={isConnected ? '0.125rem' : 3}
       role="group"
       isLoading={isConnecting}
       onClick={isConnected ? disconnect : connectWallet}
-      px={3}
-      fontWeight="bold"
-      letterSpacing={2}
-      fontSize={14}
-      height={10}
     >
       {!isConnected || !address ? (
-        'Connect'
+        'Connect Wallet'
       ) : (
         <HStack spacing={2} position="relative">
           <Flex borderRadius="50%" border="1px solid black">
@@ -55,6 +59,7 @@ export const ConnectWallet: React.FC = () => {
           >
             Disconnect?
           </Text>
+          {chainId && <NetworkDisplay chainId={chainId} />}
         </HStack>
       )}
     </PrimaryButton>

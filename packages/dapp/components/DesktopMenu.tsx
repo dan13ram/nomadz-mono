@@ -1,9 +1,12 @@
-import { HStack, Link as ChakraLink, Text } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import { HStack } from '@chakra-ui/react';
 
 import { ConnectWallet } from '@/components/ConnectWallet';
+import { useWallet } from '@/web3';
+
+import { ActiveLink } from './Link';
 
 export const DesktopMenu: React.FC = () => {
+  const { isConnected } = useWallet();
   return (
     <>
       <HStack
@@ -14,14 +17,12 @@ export const DesktopMenu: React.FC = () => {
         transform="translate(-50%, -50%)"
         zIndex={2}
       >
-        <NextLink href="/" passHref>
-          <ChakraLink display="block" _hover={{}}>
-            <Text>HOME</Text>
-          </ChakraLink>
-        </NextLink>
+        <ActiveLink href="/" passHref>
+          Home
+        </ActiveLink>
       </HStack>
 
-      <ConnectWallet />
+      {isConnected && <ConnectWallet />}
     </>
   );
 };

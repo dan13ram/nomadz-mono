@@ -1,8 +1,6 @@
 import { getAddress, solidityKeccak256 } from 'ethers/lib/utils';
-import { promises as fs } from 'fs';
 import keccak256 from 'keccak256';
 import MerkleTree from 'merkletreejs';
-import path from 'path';
 
 import { WhitelistModel } from '@/models/whitelist';
 
@@ -27,7 +25,9 @@ class Snapshot {
 
   private snapshot: string[];
 
-  constructor(snapshot: Array<string>) {
+  private updatedAt: Date;
+
+  constructor(snapshot: Array<string>, updatedAt: Date) {
     this.snapshot = snapshot.map(address => getAddress(address));
     this.snapshot = unique(this.snapshot);
 
@@ -38,6 +38,11 @@ class Snapshot {
       keccak256,
       { sortPairs: true }
     );
+    this.updatedAt = updatedAt;
+  }
+
+  public getUpdatedAt(): Date {
+    return this.updatedAt;
   }
 
   public getMerkleRoot(): string {
@@ -57,26 +62,16 @@ class Snapshot {
   }
 }
 
-const whitelistFile = path.join(__dirname, 'whitelist.txt');
+export const getSnapshot = async (): Promise<Snapshot> => {
+  const whitelists = await WhitelistModel.find();
 
-let snapshot: Snapshot;
+  const addresses = whitelists.map(w => w.address).filter(a => !!a);
+  const updatedAt = whitelists.reduce(
+    (d, w) => (w.updatedAt.getTime() > d.getTime() ? w.updatedAt : d),
+    new Date(0)
+  );
 
-export const getSnapshot = async (rebuild = false): Promise<Snapshot> => {
-  if (snapshot && !rebuild) return snapshot;
-
-  const data = await fs.readFile(whitelistFile);
-
-  const addedAddresses: string[] = [];
-  const added = await WhitelistModel.find();
-  added.forEach(a => addedAddresses.push(a.address));
-
-  const addresses = data
-    .toString()
-    .split('\n')
-    .concat(...addedAddresses)
-    .filter(a => !!a);
-
-  snapshot = new Snapshot(addresses);
+  const snapshot = new Snapshot(addresses, updatedAt);
 
   return snapshot;
 };

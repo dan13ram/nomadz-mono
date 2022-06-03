@@ -9,6 +9,8 @@ import {
 import { toast } from 'react-hot-toast';
 import Web3Modal from 'web3modal';
 
+import { fetchMerkleProof } from '@/utils/requests';
+
 import { isSupportedNetwork } from './helpers';
 import { switchChainOnMetaMask } from './metamask';
 import { CHAIN_ID, NETWORK_INFO } from './networks';
@@ -18,6 +20,8 @@ export type WalletContextType = {
   provider: providers.Web3Provider | null | undefined;
   chainId: string | null | undefined;
   address: string | null | undefined;
+  signature: string | null | undefined;
+  merkleProof: string[] | null | undefined;
   connectWallet: () => Promise<void>;
   disconnect: () => void;
   isConnecting: boolean;
@@ -29,6 +33,8 @@ export const WalletContext = createContext<WalletContextType>({
   provider: null,
   chainId: null,
   address: null,
+  signature: null,
+  merkleProof: null,
   connectWallet: async () => undefined,
   disconnect: () => undefined,
   isConnecting: true,
@@ -40,6 +46,8 @@ type WalletStateType = {
   provider?: providers.Web3Provider | null;
   chainId?: string | null;
   address?: string | null;
+  signature?: string | null;
+  merkleProof?: string[] | null;
   isMetaMask?: boolean;
 };
 
@@ -51,7 +59,8 @@ export const WalletProvider: React.FC<{ children: JSX.Element }> = ({
 }) => {
   const [walletState, setWalletState] = useState<WalletStateType>({});
 
-  const { provider, chainId, address, isMetaMask } = walletState;
+  const { provider, chainId, address, signature, isMetaMask, merkleProof } =
+    walletState;
 
   const [isConnecting, setConnecting] = useState<boolean>(true);
 
@@ -68,15 +77,22 @@ export const WalletProvider: React.FC<{ children: JSX.Element }> = ({
   const setWalletProvider = useCallback(
     async (prov: providers.ExternalProvider) => {
       const ethersProvider = new providers.Web3Provider(prov);
-      const network = (await ethersProvider.getNetwork()).chainId;
-      const signerAddress = await ethersProvider.getSigner().getAddress();
+      const signer = ethersProvider.getSigner();
+      const [network, signerAddress, sign] = await Promise.all([
+        ethersProvider.getNetwork(),
+        signer.getAddress(),
+        signer.signMessage('Welcome to Nomadz!'),
+      ]);
 
-      const chain = `0x${network.toString(16)}`;
+      const { merkleProof: proof } = await fetchMerkleProof(sign);
+
       setWalletState({
         provider: ethersProvider,
-        chainId: chain,
+        chainId: `0x${network.chainId.toString(16)}`,
         address: signerAddress.toLowerCase(),
         isMetaMask: prov.isMetaMask,
+        signature: sign,
+        merkleProof: proof,
       });
     },
     [],
@@ -104,25 +120,10 @@ export const WalletProvider: React.FC<{ children: JSX.Element }> = ({
         await setWalletProvider(modalProvider);
 
         modalProvider.on('accountsChanged', () => {
-          setWalletProvider(modalProvider);
+          disconnect();
         });
-        modalProvider.on('chainChanged', async (chainId: string) => {
-          if (isSupportedNetwork(chainId)) {
-            setWalletProvider(modalProvider);
-          } else {
-            let success = false;
-            if (isMetaMask) {
-              setConnecting(true);
-              success = await switchChainOnMetaMask(CHAIN_ID);
-              setConnecting(false);
-            }
-            if (!success) {
-              toast.error(
-                `Network not supported, please switch to ${NETWORK_INFO[CHAIN_ID].name}`,
-              );
-              disconnect();
-            }
-          }
+        modalProvider.on('chainChanged', () => {
+          disconnect();
         });
       } else {
         toast.error(
@@ -153,6 +154,8 @@ export const WalletProvider: React.FC<{ children: JSX.Element }> = ({
         provider,
         address,
         chainId,
+        signature,
+        merkleProof,
         connectWallet,
         isConnected,
         isConnecting,

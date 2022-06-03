@@ -10,6 +10,7 @@ type ConfigType = {
   JWT_SECRET: string;
   NOMADZ_CONTRACT: string;
   CHAIN_ID: number;
+  CLOSE_WHITELIST_TIMESTAMP: Date;
 };
 
 export const CONFIG: ConfigType = {
@@ -18,7 +19,8 @@ export const CONFIG: ConfigType = {
   PORT: 5000,
   JWT_SECRET: '',
   NOMADZ_CONTRACT: '',
-  CHAIN_ID: 0
+  CHAIN_ID: 0,
+  CLOSE_WHITELIST_TIMESTAMP: new Date()
 };
 
 export const initConfig = () => {
@@ -29,8 +31,10 @@ export const initConfig = () => {
     JWT_SECRET,
     NOMADZ_CONTRACT,
     INFURA_ID,
-    CHAIN_ID
+    CHAIN_ID,
+    CLOSE_WHITELIST_TIMESTAMP
   } = process.env;
+
   if (
     !MONGODB_URI ||
     !JWT_SECRET ||
@@ -38,6 +42,7 @@ export const initConfig = () => {
     !utils.isAddress(NOMADZ_CONTRACT) ||
     !INFURA_ID ||
     !CHAIN_ID ||
+    !CLOSE_WHITELIST_TIMESTAMP ||
     Number.isNaN(Number(CHAIN_ID))
   ) {
     throw new Error('Invalid ENV variables');
@@ -49,4 +54,5 @@ export const initConfig = () => {
   CONFIG.JWT_SECRET = JWT_SECRET;
   CONFIG.NOMADZ_CONTRACT = NOMADZ_CONTRACT;
   CONFIG.CHAIN_ID = Number(CHAIN_ID);
+  CONFIG.CLOSE_WHITELIST_TIMESTAMP = new Date(CLOSE_WHITELIST_TIMESTAMP);
 };

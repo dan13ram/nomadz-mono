@@ -33,17 +33,11 @@ export const AppLayout: React.FC<{ children?: React.ReactNode }> = ({
         w="100%"
         mx="auto"
         maxW="9xl"
-        mb={{ base: 6, md: 8, lg: 12 }}
       >
         <HStack w="100%" justify="space-between" pos="relative">
           <NextLink href="/" passHref>
             <ChakraLink display="block" _hover={{}} zIndex={1500}>
-              <Heading
-                color="black"
-                fontSize={isSmallScreen ? '5xl' : '3xl'}
-                fontWeight="normal"
-                lineHeight="1rem"
-              >
+              <Heading color="black" fontSize="3xl" lineHeight="1rem">
                 {'Nomadz'}
               </Heading>
             </ChakraLink>
@@ -61,8 +55,7 @@ export const AppLayout: React.FC<{ children?: React.ReactNode }> = ({
       <Flex
         direction="column"
         w="100%"
-        px={8}
-        pb={20}
+        p={8}
         maxW="8xl"
         mx="auto"
         flex={1}

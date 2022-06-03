@@ -1,6 +1,6 @@
 import { utils as ethersUtils } from 'ethers';
 
-import { CHAIN_ID, NETWORK_INFO } from './networks';
+import { AVAILABLE_NETWORK_INFO, CHAIN_ID, NETWORK_INFO } from './networks';
 
 export const formatAddress = (
   address: string | null | undefined,
@@ -27,7 +27,7 @@ export const getTxUrl = (
   txHash: string,
   chainId: string | null | undefined,
 ): string => {
-  const { explorer } = NETWORK_INFO[chainId ?? CHAIN_ID];
+  const { explorer } = AVAILABLE_NETWORK_INFO[chainId ?? CHAIN_ID];
   return `${explorer}/tx/${txHash}`;
 };
 
@@ -35,13 +35,13 @@ export const getAddressUrl = (
   address: string,
   chainId: string | null | undefined,
 ): string => {
-  const { explorer } = NETWORK_INFO[chainId ?? CHAIN_ID];
+  const { explorer } = AVAILABLE_NETWORK_INFO[chainId ?? CHAIN_ID];
   return `${explorer}/address/${address}`;
 };
 
 export const getExplorerLabel = (
   chainId: string | null | undefined,
 ): string => {
-  const { explorerLabel } = NETWORK_INFO[chainId ?? CHAIN_ID];
+  const { explorerLabel } = AVAILABLE_NETWORK_INFO[chainId ?? CHAIN_ID];
   return explorerLabel;
 };

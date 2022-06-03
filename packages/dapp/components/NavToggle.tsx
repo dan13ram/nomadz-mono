@@ -1,12 +1,17 @@
 import { Box, BoxProps } from '@chakra-ui/react';
 
+const HEIGHT = '0.4rem';
+
 const lineProps = {
-  backgroundColor: 'main',
-  borderRadius: '0.3rem',
+  backgroundColor: 'black',
+  borderRadius: 'full',
   content: '""',
   display: 'block',
-  height: '0.4rem',
-  margin: '0.3rem 0',
+  height: HEIGHT,
+  minH: HEIGHT,
+  maxH: HEIGHT,
+  mx: 0,
+  my: '0.3rem',
   width: '100%',
   transition: 'all 0.25s ease-in-out',
 };
