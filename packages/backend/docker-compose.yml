@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: base
+    command: yarn start
+    ports:
+      - 5000:5000
+    environment:
+      PORT: 5000
+      MONGODB_URI: ${MONGODB_URI}
+      JWT_SECRET: ${JWT_SECRET}
+      NOMADZ_CONTRACT: ${NOMADZ_CONTRACT}
+      RPC_URL: ${RPC_URL}
+      CHAIN_ID: ${CHAIN_ID}

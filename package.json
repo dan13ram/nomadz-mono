@@ -1,0 +1,45 @@
+{
+  "name": "@nomadz/mono-repo",
+  "version": "1.0.0",
+  "keywords": [
+    "ethereum",
+    "workspaces",
+    "yarn"
+  ],
+  "private": true,
+  "scripts": {
+    "lint": "concurrently \"yarn workspace @nomadz/dapp lint\" \"yarn workspace @nomadz/backend lint\"",
+    "typecheck": "concurrently \"yarn workspace @nomadz/dapp typecheck\" \"yarn workspace @nomadz/backend typecheck\"",
+    "format": "prettier --ignore-path .gitignore --write \"{*,**/*}.{json,yml,yaml,md,css,scss,sol}\"",
+    "dapp:dev": "yarn workspace @nomadz/dapp dev",
+    "dapp:build": "yarn workspace @nomadz/dapp build",
+    "dapp:start": "yarn workspace @nomadz/dapp start",
+    "backend:dev": "yarn workspace @nomadz/backend dev",
+    "prepare": "yarn workspace @nomadz/backend generate && husky install"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.21.0",
+    "@typescript-eslint/parser": "^5.21.0",
+    "concurrently": "^7.1.0",
+    "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^16.1.4",
+    "eslint-import-resolver-typescript": "^2.7.0",
+    "eslint-plugin-import": "^2.24.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.4.1",
+    "prettier": "^2.5.1",
+    "typescript": "^4.6.3"
+  }
+}
