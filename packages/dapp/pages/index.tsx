@@ -1,8 +1,10 @@
-import { Stack } from '@chakra-ui/react';
+import { Stack, Text } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { useTimeDifference } from '@/hooks/useTimeDifference';
+import { CLOSE_WHITELIST_TIMESTAMP } from '@/utils/constants';
 import { handleError } from '@/utils/helpers';
 import { confirmWhitelist } from '@/utils/requests';
 import { useWallet } from '@/web3';
@@ -35,8 +37,11 @@ const Home: React.FC = () => {
     [merkleProof],
   );
 
+  const timeLeft = useTimeDifference(CLOSE_WHITELIST_TIMESTAMP);
+
   return (
     <Stack align="center" p={{ base: '4', md: '16' }} spacing="8">
+      <Text>Time left for Whitelist: {timeLeft}</Text>
       <PrimaryButton
         onClick={onWhitelist}
         isLoading={isLoading}

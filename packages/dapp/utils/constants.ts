@@ -12,6 +12,14 @@ export const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT!;
 
 export const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!;
 
+export const CLOSE_WHITELIST_TIMESTAMP = new Date(
+  process.env.NEXT_PUBLIC_CLOSE_WHITELIST_TIMESTAMP ?? 0,
+);
+
+export const START_MINT_TIMESTAMP = new Date(
+  process.env.NEXT_PUBLIC_START_MINT_TIMESTAMP ?? 0,
+);
+
 export const ROUTES = [
   {
     label: 'Home',
