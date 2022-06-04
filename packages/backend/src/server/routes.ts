@@ -32,6 +32,7 @@ ROUTES.get('/merkleProof', async (req: Request, res: Response) => {
     res.status(200).json({
       response: {
         merkleProof: snapshot.getMerkleProof(address),
+        verified: snapshot.verifyAddress(address),
         updatedAt: snapshot.getUpdatedAt()
       }
     });

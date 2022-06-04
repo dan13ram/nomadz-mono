@@ -1,5 +1,5 @@
 import { Stack, Text } from '@chakra-ui/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -10,7 +10,7 @@ import { confirmWhitelist } from '@/utils/requests';
 import { useWallet } from '@/web3';
 
 const Home: React.FC = () => {
-  const { signature, merkleProof } = useWallet();
+  const { signature, verified } = useWallet();
   const [isLoading, setLoading] = useState(false);
   const [whitelisted, setWhitelisted] = useState(false);
   const onWhitelist = useCallback(async () => {
@@ -29,14 +29,6 @@ const Home: React.FC = () => {
     }
   }, [signature]);
 
-  useEffect(
-    () =>
-      setWhitelisted(old =>
-        old ? old : !!merkleProof && merkleProof.length > 0,
-      ),
-    [merkleProof],
-  );
-
   const timeLeft = useTimeDifference(CLOSE_WHITELIST_TIMESTAMP);
 
   return (
@@ -45,9 +37,11 @@ const Home: React.FC = () => {
       <PrimaryButton
         onClick={onWhitelist}
         isLoading={isLoading}
-        isDisabled={!signature || whitelisted}
+        isDisabled={!signature || whitelisted || !!verified}
       >
-        {whitelisted ? 'Already Whitelisted' : 'Confirm Whitelist'}
+        {whitelisted || !!verified
+          ? 'Already Whitelisted'
+          : 'Confirm Whitelist'}
       </PrimaryButton>
     </Stack>
   );

@@ -22,6 +22,7 @@ export type WalletContextType = {
   address: string | null | undefined;
   signature: string | null | undefined;
   merkleProof: string[] | null | undefined;
+  verified: boolean | null | undefined;
   connectWallet: () => Promise<void>;
   disconnect: () => void;
   isConnecting: boolean;
@@ -35,6 +36,7 @@ export const WalletContext = createContext<WalletContextType>({
   address: null,
   signature: null,
   merkleProof: null,
+  verified: null,
   connectWallet: async () => undefined,
   disconnect: () => undefined,
   isConnecting: true,
@@ -48,6 +50,7 @@ type WalletStateType = {
   address?: string | null;
   signature?: string | null;
   merkleProof?: string[] | null;
+  verified?: boolean | null;
   isMetaMask?: boolean;
 };
 
@@ -59,8 +62,15 @@ export const WalletProvider: React.FC<{ children: JSX.Element }> = ({
 }) => {
   const [walletState, setWalletState] = useState<WalletStateType>({});
 
-  const { provider, chainId, address, signature, isMetaMask, merkleProof } =
-    walletState;
+  const {
+    provider,
+    chainId,
+    address,
+    signature,
+    isMetaMask,
+    merkleProof,
+    verified,
+  } = walletState;
 
   const [isConnecting, setConnecting] = useState<boolean>(true);
 
@@ -84,8 +94,8 @@ export const WalletProvider: React.FC<{ children: JSX.Element }> = ({
         signer.signMessage('Welcome to Nomadz!'),
       ]);
 
-      const { merkleProof: proof } = await fetchMerkleProof(sign);
-
+      const { merkleProof: proof, verified: proofVerified } =
+        await fetchMerkleProof(sign);
       setWalletState({
         provider: ethersProvider,
         chainId: `0x${network.chainId.toString(16)}`,
@@ -93,6 +103,7 @@ export const WalletProvider: React.FC<{ children: JSX.Element }> = ({
         isMetaMask: prov.isMetaMask,
         signature: sign,
         merkleProof: proof,
+        verified: proofVerified,
       });
     },
     [],
@@ -156,6 +167,7 @@ export const WalletProvider: React.FC<{ children: JSX.Element }> = ({
         chainId,
         signature,
         merkleProof,
+        verified,
         connectWallet,
         isConnected,
         isConnecting,

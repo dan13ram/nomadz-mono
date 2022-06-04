@@ -41,6 +41,10 @@ class Snapshot {
     this.updatedAt = updatedAt;
   }
 
+  public getAddresses(): string[] {
+    return this.addresses;
+  }
+
   public getUpdatedAt(): Date {
     return this.updatedAt;
   }

@@ -15,6 +15,7 @@ export type WhitelistResponse = {
 
 export type MerkleProofResponse = {
   merkleProof: string[];
+  verified: boolean;
   updatedAt: string;
 };
 
