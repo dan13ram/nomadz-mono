@@ -2,7 +2,7 @@ import { getAddress, solidityKeccak256 } from 'ethers/lib/utils';
 import keccak256 from 'keccak256';
 import MerkleTree from 'merkletreejs';
 
-import { WhitelistModel } from '@/models/whitelist';
+import { WhitelistDocument, WhitelistModel } from '@/models/whitelist';
 
 const unique = (a: Array<string>): Array<string> => {
   const seen: Record<string, boolean> = {};
@@ -23,17 +23,17 @@ const generateLeaf = (address: string): Buffer =>
 class Snapshot {
   private merkleTree: MerkleTree;
 
-  private snapshot: string[];
+  private addresses: string[];
 
   private updatedAt: Date;
 
-  constructor(snapshot: Array<string>, updatedAt: Date) {
-    this.snapshot = snapshot.map(address => getAddress(address));
-    this.snapshot = unique(this.snapshot);
+  constructor(addresses: Array<string>, updatedAt: Date) {
+    this.addresses = addresses.map(address => getAddress(address));
+    this.addresses = unique(this.addresses);
 
     this.merkleTree = new MerkleTree(
       // Generate leafs
-      this.snapshot.map(address => generateLeaf(address)),
+      this.addresses.map(address => generateLeaf(address)),
       // Hashing function
       keccak256,
       { sortPairs: true }
@@ -62,10 +62,14 @@ class Snapshot {
   }
 }
 
-export const getSnapshot = async (): Promise<Snapshot> => {
+export const getSnapshot = async (): Promise<
+  [Snapshot, WhitelistDocument[]]
+> => {
   const whitelists = await WhitelistModel.find();
 
-  const addresses = whitelists.map(w => w.address).filter(a => !!a);
+  const addresses = whitelists
+    .filter(w => w.confirmed && !!w.address)
+    .map(w => w.address);
   const updatedAt = whitelists.reduce(
     (d, w) => (w.updatedAt.getTime() > d.getTime() ? w.updatedAt : d),
     new Date(0)
@@ -73,5 +77,5 @@ export const getSnapshot = async (): Promise<Snapshot> => {
 
   const snapshot = new Snapshot(addresses, updatedAt);
 
-  return snapshot;
+  return [snapshot, whitelists];
 };

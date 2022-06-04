@@ -18,13 +18,14 @@ export type MerkleProofResponse = {
   updatedAt: string;
 };
 
-export type MerkleRootResponse = {
-  merkleRoot: string[];
+export type StatusResponse = {
+  whitelists: WhitelistResponse[];
+  merkleRoot: string;
   updatedAt: string;
 };
 
 const handleResponse = <T>({ response, error, status }: ResponseType): T => {
-  if (error) throw new Error(error);
+  if (error) throw new Error(`Error ${status}: error`);
   return response as T;
 };
 
@@ -44,16 +45,7 @@ export const fetchMerkleProof = async (signature: string) => {
   );
 };
 
-export const fetchMerkleRoot = async () => {
-  const result = await axios.post('/api/merkleRoot', {});
-  return handleResponse<MerkleRootResponse>(
-    result.data as unknown as ResponseType,
-  );
-};
-
-export const fetchWhitelists = async () => {
-  const result = await axios.post('/api/whitelists', {});
-  return handleResponse<Array<WhitelistResponse>>(
-    result.data as unknown as ResponseType,
-  );
+export const fetchStatus = async () => {
+  const result = await axios.post('/api/status', {});
+  return handleResponse<StatusResponse>(result.data as unknown as ResponseType);
 };

@@ -35,7 +35,7 @@ export const verifyToken = (
   }
 };
 
-const UNAUTHENTICATED_URLS: string[] = ['/api/merkleRoot', '/api/whitelists'];
+const UNAUTHENTICATED_URLS: string[] = ['/api/status'];
 
 export const validateRequest = (
   req: Request,

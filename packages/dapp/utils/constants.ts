@@ -11,3 +11,14 @@ export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 export const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT!;
 
 export const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!;
+
+export const ROUTES = [
+  {
+    label: 'Home',
+    path: '/',
+  },
+  {
+    label: 'Status',
+    path: '/status',
+  },
+];

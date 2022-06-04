@@ -1,6 +1,7 @@
 import { Modal, ModalBody, ModalContent, VStack } from '@chakra-ui/react';
 
 import { ConnectWallet } from '@/components/ConnectWallet';
+import { ROUTES } from '@/utils/constants';
 import { useWallet } from '@/web3';
 
 import { ActiveLink } from './Link';
@@ -23,9 +24,11 @@ export const MobileMenu: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         <ModalBody h="100%" borderRadius={0} bg="white" color="black">
           <VStack spacing={6} h="100%" w="100%" justify="center">
             {isConnected && <ConnectWallet />}
-            <ActiveLink href="/" passHref onClick={onClose}>
-              Home
-            </ActiveLink>
+            {ROUTES.map(r => (
+              <ActiveLink href={r.path} passHref onClick={onClose} key={r.path}>
+                {r.label}
+              </ActiveLink>
+            ))}
           </VStack>
         </ModalBody>
       </ModalContent>

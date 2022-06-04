@@ -2,14 +2,13 @@ import { Stack } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
-import { ConnectWallet } from '@/components/ConnectWallet';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { handleError } from '@/utils/helpers';
 import { confirmWhitelist } from '@/utils/requests';
 import { useWallet } from '@/web3';
 
 const Home: React.FC = () => {
-  const { isConnected, signature, merkleProof } = useWallet();
+  const { signature, merkleProof } = useWallet();
   const [isLoading, setLoading] = useState(false);
   const [whitelisted, setWhitelisted] = useState(false);
   const onWhitelist = useCallback(async () => {
@@ -29,25 +28,22 @@ const Home: React.FC = () => {
   }, [signature]);
 
   useEffect(
-    () => setWhitelisted(old => (old ? old : !!merkleProof)),
+    () =>
+      setWhitelisted(old =>
+        old ? old : !!merkleProof && merkleProof.length > 0,
+      ),
     [merkleProof],
   );
 
   return (
     <Stack align="center" p={{ base: '4', md: '16' }} spacing="8">
-      {isConnected ? (
-        <>
-          <PrimaryButton
-            onClick={onWhitelist}
-            isLoading={isLoading}
-            isDisabled={!signature || whitelisted}
-          >
-            {whitelisted ? 'Already Whitelisted' : 'Confirm Whitelist'}
-          </PrimaryButton>
-        </>
-      ) : (
-        <ConnectWallet />
-      )}
+      <PrimaryButton
+        onClick={onWhitelist}
+        isLoading={isLoading}
+        isDisabled={!signature || whitelisted}
+      >
+        {whitelisted ? 'Already Whitelisted' : 'Confirm Whitelist'}
+      </PrimaryButton>
     </Stack>
   );
 };

@@ -12,6 +12,7 @@ import { useState } from 'react';
 
 import { useWallet } from '@/web3';
 
+import { ConnectWallet } from './ConnectWallet';
 import { DesktopMenu } from './DesktopMenu';
 import { MobileMenu } from './MobileMenu';
 import { NavToggle } from './NavToggle';
@@ -37,8 +38,8 @@ export const AppLayout: React.FC<{ children?: React.ReactNode }> = ({
         <HStack w="100%" justify="space-between" pos="relative">
           <NextLink href="/" passHref>
             <ChakraLink display="block" _hover={{}} zIndex={1500}>
-              <Heading color="black" fontSize="3xl" lineHeight="1rem">
-                {'Nomadz'}
+              <Heading color="black" fontSize="3xl" py={1}>
+                Nomadz
               </Heading>
             </ChakraLink>
           </NextLink>
@@ -66,7 +67,13 @@ export const AppLayout: React.FC<{ children?: React.ReactNode }> = ({
         opacity={isOpen && isSmallScreen && isConnected ? 0 : 1}
         transition="opacity 0.25s"
       >
-        {children}
+        {isConnected ? (
+          children
+        ) : (
+          <Stack align="center" p={{ base: '4', md: '16' }} spacing="8">
+            <ConnectWallet />
+          </Stack>
+        )}
       </Flex>
     </Stack>
   );

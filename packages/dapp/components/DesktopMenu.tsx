@@ -1,6 +1,7 @@
 import { HStack } from '@chakra-ui/react';
 
 import { ConnectWallet } from '@/components/ConnectWallet';
+import { ROUTES } from '@/utils/constants';
 import { useWallet } from '@/web3';
 
 import { ActiveLink } from './Link';
@@ -17,9 +18,11 @@ export const DesktopMenu: React.FC = () => {
         transform="translate(-50%, -50%)"
         zIndex={2}
       >
-        <ActiveLink href="/" passHref>
-          Home
-        </ActiveLink>
+        {ROUTES.map(r => (
+          <ActiveLink href={r.path} passHref key={r.path}>
+            {r.label}
+          </ActiveLink>
+        ))}
       </HStack>
 
       {isConnected && <ConnectWallet />}

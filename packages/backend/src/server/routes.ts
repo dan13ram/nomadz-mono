@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 
-import { createWhitelist, getWhitelists } from '@/controllers/whitelist';
+import { createWhitelist } from '@/controllers/whitelist';
 import { AuthRequest } from '@/middlewares/auth';
 import { CONFIG } from '@/utils/config';
 import { handleMongoError } from '@/utils/helpers';
@@ -25,19 +25,9 @@ ROUTES.post('/whitelist', async (req: Request, res: Response) => {
   }
 });
 
-ROUTES.get('/whitelists', async (_req: Request, res: Response) => {
-  try {
-    const response = await getWhitelists();
-    res.status(200).json({ response });
-  } catch (err) {
-    console.error('Error fetching whitelists:', (err as Error)?.message ?? err);
-    handleMongoError(res, err);
-  }
-});
-
 ROUTES.get('/merkleProof', async (req: Request, res: Response) => {
   try {
-    const snapshot = await getSnapshot();
+    const [snapshot] = await getSnapshot();
     const address = (req as AuthRequest).signer;
     res.status(200).json({
       response: {
@@ -54,20 +44,18 @@ ROUTES.get('/merkleProof', async (req: Request, res: Response) => {
   }
 });
 
-ROUTES.get('/merkleRoot', async (_req: Request, res: Response) => {
+ROUTES.get('/status', async (_req: Request, res: Response) => {
   try {
-    const snapshot = await getSnapshot();
+    const [snapshot, whitelists] = await getSnapshot();
     res.status(200).json({
       response: {
+        whitelists,
         merkleRoot: snapshot.getMerkleRoot(),
         updatedAt: snapshot.getUpdatedAt()
       }
     });
   } catch (err) {
-    console.error(
-      'Error fetching merkle root:',
-      (err as Error)?.message ?? err
-    );
+    console.error('Error fetching status:', (err as Error)?.message ?? err);
     handleMongoError(res, err);
   }
 });
