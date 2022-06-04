@@ -1,11 +1,7 @@
 {
   "name": "@nomadz/mono-repo",
   "version": "1.0.0",
-  "keywords": [
-    "ethereum",
-    "workspaces",
-    "yarn"
-  ],
+  "keywords": ["ethereum", "workspaces", "yarn"],
   "private": true,
   "scripts": {
     "lint": "concurrently \"yarn workspace @nomadz/dapp lint\" \"yarn workspace @nomadz/backend lint\"",
@@ -15,12 +11,11 @@
     "dapp:build": "yarn workspace @nomadz/dapp build",
     "dapp:start": "yarn workspace @nomadz/dapp start",
     "backend:dev": "yarn workspace @nomadz/backend dev",
+    "backend:start": "yarn workspace @nomadz/backend start",
     "prepare": "yarn workspace @nomadz/backend generate && husky install"
   },
   "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
+    "packages": ["packages/*"]
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.21.0",
